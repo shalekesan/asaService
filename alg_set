@@ -1,0 +1,48 @@
+*****Вывод списка циклов и дисциплин
+
+
+
+//$cycles = asaFactory::get_user_curriculum("АхмеджановаНафиса012012111216205262");
+$cycles = asaFactory::get_user_curriculum($USER->username);
+//$cycles = asaFactory::get_curriculum(); АхмеджановаНафиса012012111216205262
+
+
+echo "Количество циклов: ".$cycles->get_count();
+echo html_writer::start_tag('ul');
+
+
+
+foreach ($cycles as $cycle) {
+    echo html_writer::start_tag('li');
+    echo $cycle->get_name();
+    
+  //  var_dump($cycle);
+    
+    echo html_writer::start_tag('ul');
+        foreach ($cycle as $subject_group) {
+            echo html_writer::start_tag('ul');
+            if ($subject_group->get_number()==0){
+                echo 'Дисциплины обязательные для изучения:';
+            }
+            else{
+                echo 'Группа дисциплин №'.$subject_group->get_number();
+            }
+                echo html_writer::start_tag('ul');
+                    foreach ($subject_group as $subject) {
+                        echo html_writer::start_tag('li');
+                        echo $subject->get_name();
+                        echo html_writer::end_tag('li');
+                    }
+                echo html_writer::end_tag('ul');
+            echo html_writer::end_tag('ul');
+        }
+    echo html_writer::end_tag('ul');
+    echo html_writer::end_tag('li');
+}
+
+echo html_writer::end_tag('ul');
+
+
+******Инициализация формы наследницы  moodleform_mod
+
+$mform = new mod_asalink_mod_form($asalink, $n, $cm, $course);
