@@ -6,7 +6,8 @@ class asaSemesterWork
 {
     private $fnumber;
     private $ftype_testing;
-    
+    private $fLectureHours;
+	
     public function get_number()
     {
         return $this->fnumber;
