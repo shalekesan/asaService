@@ -53,13 +53,13 @@ class asaFactory
     
     private static function parse_semester_work($response)
     {
-        $res = new asaSemesterWork($response->Number, self::parse_type_testing($response->TypeTesting));
+        $res = new asaSemesterWork($response->Number, self::parse_type_testing($response->TypeTesting), $response->Hours);
         return $res;
     }
     
     private static function parse_subject($response)
     {
-        $res = new asaSubject($response->Subject->FID, $response->Subject->FName);
+        $res = new asaSubject($response->Subject->FID, $response->Subject->FName, $response->Code);
         $sw = $response->SemesterWorks;
 	    if (count($sw) == 1) 
 		{
