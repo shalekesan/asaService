@@ -6,7 +6,7 @@ class asaSemesterWork
 {
     private $fnumber;
     private $ftype_testing;
-    private $fLectureHours;
+    private $fHours;
 	
     public function get_number()
     {
@@ -17,11 +17,16 @@ class asaSemesterWork
     {
         return $this->ftype_testing;
     }
-    
-    public function __construct($anumber, asaTypeTesting $atype_testing)
+    public function get_hours()
+    {
+        return $this->fHours;
+    }
+	
+    public function __construct($anumber, asaTypeTesting $atype_testing, $ahours)
     {
         $this->fnumber = $anumber;
         $this->ftype_testing = $atype_testing;
+		$this->fHours = $ahours;
     }
 }
 ?>
