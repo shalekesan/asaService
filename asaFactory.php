@@ -1,10 +1,10 @@
 <?php
 
-require_once($CFG->libdir .'/asaService/asaCycles.php');
-require_once($CFG->libdir .'/asaService/asaAttestationInfo.php');
-require_once($CFG->libdir .'/asaService/asaAttestationItem.php');
-require_once($CFG->libdir .'/asaService/asaResponseUtils.php');
-require_once($CFG->libdir .'/php_fast_cache.php');
+require_once($_SERVER["DOCUMENT_ROOT"].'/bitrix/Lib/asaService/asaCycles.php');
+require_once($_SERVER["DOCUMENT_ROOT"].'/bitrix/Lib/asaService/asaAttestationInfo.php');
+require_once($_SERVER["DOCUMENT_ROOT"].'/bitrix/Lib/asaService/asaAttestationItem.php');
+require_once($_SERVER["DOCUMENT_ROOT"].'/bitrix/Lib/asaService/asaResponseUtils.php');
+//require_once($_SERVER["DOCUMENT_ROOT"].'/bitrix/Lib/php_fast_cache.php');
 
 define("empty_guid", "00000000-0000-0000-0000-000000000000");
 define("form_attestation_test", "Тест");
@@ -25,9 +25,9 @@ class asaFactory
     public static function singleton()
     {
         if (!isset(self::$client)) {
-            
-            ini_set('soap.wsdl_cache_enabled', '0');
-            //ini_set('soap.wsdl_cache_ttl', '10');
+
+			//ini_set('soap.wsdl_cache_enabled', '0');
+            ini_set('soap.wsdl_cache_ttl', '10');
             self::$client = new SoapClient('http://asa.insto.ru:3989/Service1.svc?wsdl');
         }
         return self::$client;
@@ -51,9 +51,24 @@ class asaFactory
         return $res;
     }
     
+	private static function parse_matricula_record($response)
+	{
+		$res = new asaMatriculaRecord();
+		
+		if ($response->FinalResults !== null)
+		{
+		
+			$res->DateAttestation = $response->FinalResults->DateAttestation;
+			$res->Pass = $response->FinalResults->Passed;
+			$res->Est = $response->FinalResults->Ball;
+		}
+		return $res;
+	}
+	
     private static function parse_semester_work($response)
     {
-        $res = new asaSemesterWork($response->Number, self::parse_type_testing($response->TypeTesting), $response->Hours);
+        $res = new asaSemesterWork($response->Number, self::parse_type_testing($response->TypeTesting),
+			self::parse_matricula_record($response->MatriculaRecord), $response->Hours);
         return $res;
     }
     
@@ -80,10 +95,16 @@ class asaFactory
     private static function parse_subject_group($response)
     {
         $res = new asaSubjectGroup($response->GrouNumber);
-        foreach($response->Subjects->asaSubject as $value)
-	{
-            $res->add_subject(self::parse_subject($value));
-        };
+		if (is_array($response->Subjects->asaSubject)){
+			foreach($response->Subjects->asaSubject as $value)
+			{
+				$res->add_subject(self::parse_subject($value));
+			};
+		}
+		else
+		{
+			$res->add_subject(self::parse_subject($response->Subjects->asaSubject));
+		}
         return $res;
     }
 	
@@ -94,8 +115,11 @@ class asaFactory
 	$c_shortname = $response->ShortName;
         $res = new asaCycle($c_id, $c_name, $c_shortname);
         
-        if (is_array($response->SubjectGroups)){
-            foreach($response->SubjectGroups as $value)
+		//var_dump($response->SubjectGroups);
+		//echo '====================================';
+		//echo '<pre>';	 var_dump($response); echo '</pre>';
+        if (is_array($response->SubjectGroups->asaSubjectGroup)){
+            foreach($response->SubjectGroups->asaSubjectGroup as $value)
             {
                 $c_sg = self::parse_subject_group($value);
                 $res->add_subjects_group($c_sg);
@@ -111,8 +135,9 @@ class asaFactory
 	private static function parse_cycles($response)
     {
         $res = new asaCycles();
-        foreach($response->Cycles as $value)
-	{
+	//echo '<pre>';	 var_dump($response); echo '<.pre>';
+        foreach($response->Cycles->asaCycle as $value)
+		{
             $res->add_subject(self::parse_cycle($value));
         };
         return $res;
@@ -305,6 +330,15 @@ class asaFactory
                     'Response'=>self::create_response_as_param($response)));
         //$result = self::parse_responses($res->GetAttestationAllResponsesResult);
         //return $result;
+    }
+	
+	public static function set_subject_on_choice($user_name, $subject_group_number, $subject_name)
+    {
+        $res = self::singleton()->SetSubjectOnChoice(
+                array('Login'=>$user_name, 
+                        'Token'=>asa_key, 
+                    'SubjectGroupNumber'=>$subject_group_number,
+                    'SubjectName'=>$subject_name));
     }
 }
 

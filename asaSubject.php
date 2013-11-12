@@ -1,7 +1,7 @@
 <?php
 
-require_once($CFG->libdir .'/asaService/asaArray.php');
-require_once($CFG->libdir .'/asaService/asaSemesterWork.php');
+require_once($_SERVER["DOCUMENT_ROOT"].'/bitrix/Lib/asaService/asaArray.php');
+require_once($_SERVER["DOCUMENT_ROOT"].'/bitrix/Lib/asaService/asaSemesterWork.php');
 
 class asaSubject extends asaArray
 {

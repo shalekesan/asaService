@@ -10,8 +10,8 @@
  *
  * @author Timur
  */
-require_once($CFG->libdir .'/asaService/asaTestVariant.php');
-require_once($CFG->libdir .'/asaService/asaArray.php');
+require_once($_SERVER["DOCUMENT_ROOT"].'/bitrix/Lib/asaService/asaTestVariant.php');
+require_once($_SERVER["DOCUMENT_ROOT"].'/bitrix/Lib/asaService/asaArray.php');
 
 class asaTestVariants extends asaArray{
     public function add_variant(asaTestVariant $s)

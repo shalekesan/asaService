@@ -11,7 +11,7 @@
  * @author Timur
  */
 
-require_once($CFG->libdir .'/asaService/asaTestVariants.php');
+require_once($_SERVER["DOCUMENT_ROOT"].'/bitrix/Lib/asaService/asaTestVariants.php');
 
 class asaAttestationItem {
     //put your code here

@@ -1,5 +1,5 @@
 <?php
-require_once($CFG->libdir .'/asaService/asaSubjectGroup.php');
+require_once($_SERVER["DOCUMENT_ROOT"].'/bitrix/Lib/asaService/asaSubjectGroup.php');
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
