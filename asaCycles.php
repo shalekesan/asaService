@@ -16,6 +16,14 @@ class asaCycles extends asaArray{
     {
         $this->add($s);
     }
+	
+	public function add_cycles(asaCycles $s)
+    {
+		foreach ($s as $cycle){
+			$this->add($cycle);
+		}
+    }
+	
 	public function get_cycle($inx)
 	{
 		return $this->get_value($inx);

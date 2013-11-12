@@ -4,6 +4,8 @@ require_once($_SERVER["DOCUMENT_ROOT"].'/bitrix/Lib/asaService/asaCycles.php');
 require_once($_SERVER["DOCUMENT_ROOT"].'/bitrix/Lib/asaService/asaAttestationInfo.php');
 require_once($_SERVER["DOCUMENT_ROOT"].'/bitrix/Lib/asaService/asaAttestationItem.php');
 require_once($_SERVER["DOCUMENT_ROOT"].'/bitrix/Lib/asaService/asaResponseUtils.php');
+require_once($_SERVER["DOCUMENT_ROOT"].'/bitrix/Lib/asaService/asaCurriculum.php');
+
 //require_once($_SERVER["DOCUMENT_ROOT"].'/bitrix/Lib/php_fast_cache.php');
 
 define("empty_guid", "00000000-0000-0000-0000-000000000000");
@@ -135,14 +137,33 @@ class asaFactory
 	private static function parse_cycles($response)
     {
         $res = new asaCycles();
-	//echo '<pre>';	 var_dump($response); echo '<.pre>';
-        foreach($response->Cycles->asaCycle as $value)
+		if (is_array($response->Cycles->asaCycle)){
+			foreach($response->Cycles->asaCycle as $value)
+			{
+				$res->add_subject(self::parse_cycle($value));
+			};
+		}
+		else
 		{
-            $res->add_subject(self::parse_cycle($value));
-        };
+			$res->add_subject(self::parse_cycle($response->Cycles->asaCycle));
+		}
         return $res;
     }
     
+	protected static function parse_meta_info($buff)
+    {
+		
+		$res = new asaMetaInfo($buff->OrganizationName,
+                $buff->SubdivisionName,
+                $buff->DirectionName,
+                $buff->SpecializationName,
+                $buff->DurationEducation,
+                $buff->QualificationEducation,
+                $buff->FormEducation,
+                $buff->BaseEducationRate);
+		return $res;
+    }
+	
     public static function parse_test_variant($data)
     {
         return new asaTestVariant($data->OrderNum, $data->Sequence, 
@@ -152,14 +173,16 @@ class asaFactory
     public static function get_curriculum()
     {
         $res = self::singleton()->GetCurriculum();
-        $result = self::parse_cycles($res->GetCurriculumResult);
+		$result = new asaCurriculum(self::parse_meta_info($res->GetUserCurriculumResult->MetaInfo));
+        $result->get_cycles()->add_cycles(self::parse_cycles($res->GetCurriculumResult));
         return $result;
     }
     
     public static function get_user_curriculum($un)
     {
-        $res = self::singleton()->GetUserCurriculum(array('Login'=>$un));
-        $result = self::parse_cycles($res->GetUserCurriculumResult);
+		$res = self::singleton()->GetUserCurriculum(array('Login'=>$un));
+		$result = new asaCurriculum(self::parse_meta_info($res->GetUserCurriculumResult->MetaInfo));
+        $result->get_cycles()->add_cycles(self::parse_cycles($res->GetUserCurriculumResult));
         return $result;
     }
     
@@ -177,6 +200,7 @@ class asaFactory
                 $buff->TypeTesting,
                 $buff->InError, $buff->ErrorMessage);
     }
+	
 
 
     public static function get_attestation_info($user_name, $subject_name)
