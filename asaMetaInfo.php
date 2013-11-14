@@ -11,7 +11,8 @@ class asaMetaInfo
 	private $fQualificationEducation;
 	private $fFormEducation;
 	private $fBaseEducationRate;
-    
+    private $fMember;
+	
     public function get_organization_name()
     {
         return $this->fOrganizationName;
@@ -52,10 +53,15 @@ class asaMetaInfo
         return $this->fBaseEducationRate;
     }
 	
+	public function get_member()
+    {
+        return $this->fMember;
+    }
+	
     public function __construct($aOrganizationName, $aSubdivisionName, 
 		$aDirectionName, $aSpecializationName, $aDurationEducation, 
 		$aQualificationEducation, $aFormEducation, 
-		$aBaseEducationRate)
+		$aBaseEducationRate, $aMember)
     {
         $this->fOrganizationName = $aOrganizationName;
         $this->fSubdivisionName = $aSubdivisionName;
@@ -65,6 +71,7 @@ class asaMetaInfo
 		$this->fQualificationEducation = $aQualificationEducation;
 		$this->fFormEducation = $aFormEducation;
 		$this->fBaseEducationRate = $aBaseEducationRate;
+		$this->fMember = $aMember;
     }
 }
 ?>

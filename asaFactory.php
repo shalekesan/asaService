@@ -78,17 +78,17 @@ class asaFactory
     {
         $res = new asaSubject($response->Subject->FID, $response->Subject->FName, $response->Code);
         $sw = $response->SemesterWorks;
-	    if (count($sw) == 1) 
+	    if (is_array($sw->asaSemesterWork)) 
 		{
-			$sw_val = self::parse_semester_work($sw->asaSemesterWork);
-			$res->add_semester_work($sw_val);
+			foreach($sw->asaSemesterWork as $value) {
+				$sw_val = self::parse_semester_work($value);
+				$res->add_semester_work($sw_val);
+			}
 		}
 		else
 		{
-			foreach($sw as $value) {
-				$sw_val = self::parse_semester_work($value->asaSemesterWork);
-				$res->add_semester_work($sw_val);
-			}
+			$sw_val = self::parse_semester_work($sw->asaSemesterWork);
+			$res->add_semester_work($sw_val);
 		}
 		//print $res->get_name();
         return $res;
@@ -160,7 +160,8 @@ class asaFactory
                 $buff->DurationEducation,
                 $buff->QualificationEducation,
                 $buff->FormEducation,
-                $buff->BaseEducationRate);
+                $buff->BaseEducationRate,
+				$buff->Member);
 		return $res;
     }
 	

@@ -35,5 +35,43 @@ class asaSubject extends asaArray
     {
         $this->add($sw);
     }
+	
+	public function work_count_in_semester($sem)
+	{
+		$pres = 0;
+		foreach($this as $sw)
+		{
+			if ($sw->get_number()==$sem)
+			{
+				$pres = $pres + 1;
+			}
+		}
+		return $pres;
+	}
+	
+	public function passed()
+	{
+		foreach($this as $sw)
+		{
+			if (! $sw->get_matricula_record()->Pass)
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public function semester_present($sem)
+	{
+		$pres = false;
+		foreach($this as $sw)
+		{
+			if ($sw->get_number()==$sem)
+			{
+				$pres = true;
+			}
+		}
+		return $pres;
+	}
 }
 ?>
