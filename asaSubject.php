@@ -73,5 +73,14 @@ class asaSubject extends asaArray
 		}
 		return $pres;
 	}
+	
+	public function get_subject_hours()
+	{
+		if ($this->get_count()>0)
+		{
+			return $this->get_value(0)->get_hours();
+		}
+		return 0;
+	}
 }
 ?>
