@@ -357,12 +357,20 @@ class asaFactory
         //return $result;
     }
 	
-	public static function set_subject_on_choice($user_name, $subject_group_number, $subject_name)
+    public static function set_subject_on_choice($user_name, $subject_group_number, $subject_name)
     {
         $res = self::singleton()->SetSubjectOnChoice(
                 array('Login'=>$user_name, 
                         'Token'=>asa_key, 
                     'SubjectGroupNumber'=>$subject_group_number,
+                    'SubjectName'=>$subject_name));
+    }
+    
+    public static function get_student_rating($agreement_numver, $subject_name)
+    {
+        $res = self::singleton()->SetSubjectOnChoice(
+                array('token'=>'', 
+                        'AgreementNumber'=>$agreement_numver, 
                     'SubjectName'=>$subject_name));
     }
 }
